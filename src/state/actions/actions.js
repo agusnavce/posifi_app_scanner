@@ -1,0 +1,4 @@
+export var SET_INPUT = "SET_INPUT";
+export var SEND_WIFI_ERROR = "SEND_WIFI_ERROR";
+export var SEND_WIFI_SUCCESS = "SEND_WIFI_SUCCESS";
+export var SEND_WIFI_START = "SEND_WIFI_START";

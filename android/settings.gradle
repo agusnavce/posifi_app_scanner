@@ -1,0 +1,3 @@
+rootProject.name = 'posifi_app_scanner'
+
+include ':app'
