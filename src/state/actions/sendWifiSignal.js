@@ -4,7 +4,6 @@ import { SEND_WIFI_ERROR, SEND_WIFI_SUCCESS, SEND_WIFI_START } from "./actions";
 export const sendWifiSignal = () => {
   return dispatch => {
     dispatch({ type: SEND_WIFI_START });
-    var wifiList = [];
     wifi.reScanAndLoadWifiList(
       wifiStringList => {
         wifiList = [].concat(JSON.parse(wifiStringList));
