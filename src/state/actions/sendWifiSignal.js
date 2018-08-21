@@ -1,6 +1,7 @@
 import wifi from "react-native-android-wifi";
 import { SEND_WIFI_ERROR, SEND_WIFI_SUCCESS, SEND_WIFI_START } from "./actions";
-export const sendWifiSignals = () => {
+
+export const sendWifiSignal = () => {
   return dispatch => {
     dispatch({ type: SEND_WIFI_START });
     var wifiList = [];

@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { Container, Header, Switch } from "native-base";
 import { EnhancedCustomInputContainer as Input } from "./components/Input";
 import { EnhancedCustomButtonContainer as Button } from "./components/Button";
+import { PermissionsAndroid } from "react-native";
 import configureReactotron from "./ReactotronConfig";
 import configureStore from "./configureStore.js";
 
@@ -12,6 +13,30 @@ configureReactotron();
 const store = configureStore(idleState);
 
 export default class App extends Component {
+  async askForUserPermissions() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Wifi networks",
+          message: "We need your permission in order to find wifi networks"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Thank you for your permission! :)");
+      } else {
+        console.log(
+          "You will not able to retrieve wifi available networks list"
+        );
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+  componentDidMount() {
+    this.askForUserPermissions();
+  }
+
   render() {
     return (
       <Provider store={store}>
