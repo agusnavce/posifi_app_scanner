@@ -12,7 +12,7 @@ import {
   FETCH_PREDICTIONS_ERROR
 } from "./actions";
 
-export const scanFingerprints = () => {
+export const trackFingerprints = () => {
   return (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
