@@ -1,0 +1,77 @@
+import wifi from "react-native-android-wifi";
+import timer from "react-native-timer";
+import { Alert } from "react-native";
+import {
+  PARAMETERS_ERROR,
+  SEND_WIFI_ERROR,
+  SEND_WIFI_SUCCESS,
+  SEND_WIFI_START,
+  SEND_WIFI_END,
+  SIGNAL
+} from "./actions";
+
+export const scanFingerprints = () => {
+  return (dispatch, getState) => {
+    var state = getState().data;
+    var host = state.host;
+    var family = state.family;
+    var device = state.device;
+    if (
+      host === undefined ||
+      host === "" ||
+      family === undefined ||
+      family == "" ||
+      device === undefined ||
+      device === ""
+    ) {
+      dispatch({ type: PARAMETERS_ERROR });
+      Alert.alert(
+        "Error en los parametros",
+        "Se deben completar todos los campos",
+        [{ text: "OK", onPress: () => {} }],
+        { cancelable: false }
+      );
+    } else {
+      if (timer.intervalExists("newTimer")) {
+        timer.clearInterval("newTimer");
+        dispatch({ type: SEND_WIFI_END });
+      } else {
+        timer.setInterval("newTimer", () => dispatch({ type: SIGNAL }), 1000);
+        dispatch({ type: SEND_WIFI_START });
+      }
+    }
+  };
+};
+
+var getAndSendWifi = () => {
+  wifi.reScanAndLoadWifiList(
+    wifiStringList => {
+      wifiList = [].concat(JSON.parse(wifiStringList));
+      var lis = wifiList.reduce((previous, item) => {
+        previous[item.BSSID] = item.level;
+        return previous;
+      }, {});
+      fetch("http://google.com" + "/data", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          s: { wifi: lis },
+          d: "nuevo",
+          f: "posifi"
+        })
+      })
+        .then(res => {
+          dispatch({ type: SEND_WIFI_SUCCESS });
+        })
+        .catch(err => {
+          dispatch({ type: SEND_WIFI_ERROR, payload: err });
+        });
+    },
+    error => {
+      console.log(error);
+    }
+  );
+};

@@ -4,8 +4,8 @@ import { CustomButton } from "./CustomButton";
 
 var enhance = compose(
   withHandlers({
-    onPressButton: ({ onPressButton, sendWifiSignal }) => key => () => {
-      sendWifiSignal();
+    onPressButton: ({ onPressButton, scanFingerprints }) => key => () => {
+      scanFingerprints();
       onPressButton(key);
     }
   })

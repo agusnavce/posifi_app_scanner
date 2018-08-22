@@ -1,8 +1,8 @@
-import React from "react";
+import React, { View } from "react";
 import { Button, Text } from "native-base";
 
-export var CustomButton = ({ id, text, onPressButton }) => (
-  <Button onPress={onPressButton(id)} full primary>
+export var CustomButton = ({ active, id, text, onPressButton }) => (
+  <Button onPress={onPressButton(id)} block primary>
     <Text> {text} </Text>
   </Button>
 );

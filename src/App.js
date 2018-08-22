@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { Provider } from "react-redux";
-import { Container, Header, Switch } from "native-base";
+import { Container, Header } from "native-base";
+import { EnhancedCustomSwitchContainer as Switch } from "./components/Switch";
 import { EnhancedCustomInputContainer as Input } from "./components/Input";
 import { EnhancedCustomButtonContainer as Button } from "./components/Button";
 import { PermissionsAndroid } from "react-native";
@@ -46,7 +47,7 @@ export default class App extends Component {
           <Input id={"family"} />
           <Input id={"device"} />
           <Button id={"scan"} text={"scan fingerprints"} />
-          <Switch value={false} />
+          <Switch />
           <Button id={"track"} text={"track your phone"} />
         </Container>
       </Provider>
