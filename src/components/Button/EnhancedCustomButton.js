@@ -4,9 +4,8 @@ import { CustomButton } from "./CustomButton";
 
 var enhance = compose(
   withHandlers({
-    onPressButton: ({ onPressButton, scanFingerprints }) => key => () => {
+    onPressButton: ({ scanFingerprints }) => key => () => {
       scanFingerprints();
-      onPressButton(key);
     }
   })
 );

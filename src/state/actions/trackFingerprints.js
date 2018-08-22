@@ -7,7 +7,9 @@ import {
   SEND_WIFI_SUCCESS,
   SEND_WIFI_START,
   SEND_WIFI_END,
-  SIGNAL
+  FETCH_PREDICTIONS_SUCCESS,
+  FETCH_PREDICTIONS_START,
+  FETCH_PREDICTIONS_ERROR
 } from "./actions";
 
 export const scanFingerprints = () => {
@@ -65,6 +67,22 @@ var getAndSendWifi = dispatch => () => {
       })
         .then(res => {
           dispatch({ type: SEND_WIFI_SUCCESS });
+          dispatch({ type: FETCH_PREDICTIONS_START });
+          fetch(
+            "https://cloud.internalpositioning.com" +
+              "/api/v1/location/posifi/nuevo"
+          )
+            .then(res => {
+              res.json().then(data =>
+                dispatch({
+                  type: FETCH_PREDICTIONS_SUCCESS,
+                  payload: data.analysis.guesses
+                })
+              );
+            })
+            .catch(err => {
+              dispatch({ type: FETCH_PREDICTIONS_ERROR, payload: err });
+            });
         })
         .catch(err => {
           dispatch({ type: SEND_WIFI_ERROR, payload: err });

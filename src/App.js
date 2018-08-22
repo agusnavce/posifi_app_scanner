@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { Provider } from "react-redux";
-import { Container, Header } from "native-base";
+import {
+  Container,
+  Header,
+  Text,
+  Card,
+  CardItem,
+  Body,
+  Left,
+  Right,
+  Title
+} from "native-base";
 import { EnhancedCustomSwitchContainer as Switch } from "./components/Switch";
 import { EnhancedCustomInputContainer as Input } from "./components/Input";
 import { EnhancedCustomButtonContainer as Button } from "./components/Button";
@@ -42,13 +52,32 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <Container>
-          <Header />
+          <Header>
+            <Left />
+            <Body>
+              <Title>Posifi Scanner</Title>
+            </Body>
+            <Right />
+          </Header>
           <Input id={"host"} />
           <Input id={"family"} />
           <Input id={"device"} />
           <Button id={"scan"} text={"scan fingerprints"} />
+          <Text> Enable Tracking</Text>
           <Switch />
-          <Button id={"track"} text={"track your phone"} />
+          <Button hide={true} id={"track"} text={"track your phone"} />
+          <Card>
+            <CardItem>
+              <Body>
+                <Text>{"Texto va aca dentro"}</Text>
+              </Body>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <Text>{"Texto va aca dentro"}</Text>
+              </Body>
+            </CardItem>
+          </Card>
         </Container>
       </Provider>
     );
