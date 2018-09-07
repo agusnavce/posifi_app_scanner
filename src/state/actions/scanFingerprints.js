@@ -6,8 +6,7 @@ import {
   SEND_WIFI_ERROR,
   SEND_WIFI_SUCCESS,
   SEND_WIFI_START,
-  SEND_WIFI_END,
-  SIGNAL
+  SEND_WIFI_END
 } from "./actions";
 
 export const scanFingerprints = () => {

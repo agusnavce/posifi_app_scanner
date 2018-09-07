@@ -10,7 +10,9 @@ import {
   Body,
   Left,
   Right,
-  Title
+  Title,
+  Tab,
+  Tabs
 } from "native-base";
 import { EnhancedCustomSwitchContainer as Switch } from "./components/Switch";
 import { EnhancedCustomInputContainer as Input } from "./components/Input";
@@ -52,27 +54,46 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <Container>
-          <Header>
+          <Header hasTabs>
             <Left />
             <Body>
               <Title>Posifi Scanner</Title>
             </Body>
             <Right />
           </Header>
-          <Input id={"host"} />
-          <Input id={"family"} />
-          <Input id={"device"} />
-          <Button id={"scan"} text={"scan fingerprints"} />
-          <Text> Enable Tracking</Text>
-          <Switch />
-          <Button hide={true} id={"track"} text={"track your phone"} />
-          <Card>
-            <CardItem>
-              <Body>
-                <Text>{"Scanning FIngerprints"}</Text>
-              </Body>
-            </CardItem>
-          </Card>
+          <Tabs>
+            <Tab heading="Collect">
+              <Input style={styles.input} id={"host"} />
+              <Input id={"family"} />
+              <Input id={"device"} />
+              <Input id={"place"} />
+              <Button id={"scan"} text={"scan fingerprints"} />
+              <Text> Enable Tracking</Text>
+              <Switch />
+              <Button hide={true} id={"track"} text={"track your phone"} />
+              <Card>
+                <CardItem style={styles.card}>
+                  <Body>
+                    <Text>{"Scanning FIngerprints"}</Text>
+                  </Body>
+                </CardItem>
+              </Card>
+            </Tab>
+            <Tab heading="Errors">
+              <Input style={styles.input} id={"host"} />
+              <Input id={"family"} />
+              <Input id={"device"} />
+              <Input id={"place"} />
+              <Button id={"errors"} text={"Run error"} />
+              <Card>
+                <CardItem style={styles.card}>
+                  <Body>
+                    <Text>{"Scanning FIngerprints"}</Text>
+                  </Body>
+                </CardItem>
+              </Card>
+            </Tab>
+          </Tabs>
         </Container>
       </Provider>
     );
@@ -85,5 +106,11 @@ const styles = StyleSheet.create({
     marginTop: 50,
     padding: 20,
     backgroundColor: "#ffffff"
+  },
+  input: {
+    padding: 10
+  },
+  card: {
+    height: 150
   }
 });
