@@ -69,12 +69,7 @@ export default class App extends Component {
           <Card>
             <CardItem>
               <Body>
-                <Text>{"Texto va aca dentro"}</Text>
-              </Body>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <Text>{"Texto va aca dentro"}</Text>
+                <Text>{"Scanning FIngerprints"}</Text>
               </Body>
             </CardItem>
           </Card>
