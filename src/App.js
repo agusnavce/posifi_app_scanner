@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet } from "react-native";
 import { Provider } from "react-redux";
 import {
   Container,
   Header,
-  Text,
-  Card,
-  CardItem,
   Body,
   Left,
   Right,
@@ -14,9 +11,7 @@ import {
   Tab,
   Tabs
 } from "native-base";
-import { EnhancedCustomSwitchContainer as Switch } from "./components/Switch";
-import { EnhancedCustomInputContainer as Input } from "./components/Input";
-import { EnhancedCustomButtonContainer as Button } from "./components/Button";
+import { CollectTab, TrackTab, ErrorTab } from "./containers";
 import { PermissionsAndroid } from "react-native";
 import configureReactotron from "./ReactotronConfig";
 import configureStore from "./configureStore.js";
@@ -63,35 +58,13 @@ export default class App extends Component {
           </Header>
           <Tabs>
             <Tab heading="Collect">
-              <Input style={styles.input} id={"host"} />
-              <Input id={"family"} />
-              <Input id={"device"} />
-              <Input id={"place"} />
-              <Button id={"scan"} text={"scan fingerprints"} />
-              <Text> Enable Tracking</Text>
-              <Switch />
-              <Button hide={true} id={"track"} text={"track your phone"} />
-              <Card>
-                <CardItem style={styles.card}>
-                  <Body>
-                    <Text>{"Scanning FIngerprints"}</Text>
-                  </Body>
-                </CardItem>
-              </Card>
+              <CollectTab />
+            </Tab>
+            <Tab heading="Track">
+              <TrackTab />
             </Tab>
             <Tab heading="Errors">
-              <Input style={styles.input} id={"host"} />
-              <Input id={"family"} />
-              <Input id={"device"} />
-              <Input id={"place"} />
-              <Button id={"errors"} text={"Run error"} />
-              <Card>
-                <CardItem style={styles.card}>
-                  <Body>
-                    <Text>{"Scanning FIngerprints"}</Text>
-                  </Body>
-                </CardItem>
-              </Card>
+              <ErrorTab />
             </Tab>
           </Tabs>
         </Container>
