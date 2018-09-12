@@ -3,17 +3,16 @@ import { StyleSheet } from "react-native";
 import { Card } from "native-base";
 import { Item } from "../components/CardItem";
 import { EnhancedCustomInputContainer as Input } from "../components/Input";
-import { EnhancedCustomButtonContainer as Button } from "../components/Button";
+import { EnhancedTrackButtonContainer as Button } from "../components/Button/TrackButton";
 
-export var TrackTab = () => (
+export var TrackTab = ({ text }) => (
   <Fragment>
     <Input id={"host"} />
     <Input id={"family"} />
     <Input id={"device"} />
-    <Input id={"place"} />
-    <Button id={"scan"} text={"scan fingerprints"} />
+    <Button id={"scan"} text={"Track Phone"} />
     <Card>
-      <Item head={"Track Information"} id={"track"} text={"Tracking phone"} />
+      <Item head={"Track Information"} id={"track"} text={text} />
     </Card>
   </Fragment>
 );

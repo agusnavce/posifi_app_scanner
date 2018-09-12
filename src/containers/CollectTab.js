@@ -2,9 +2,9 @@ import React, { Fragment } from "react";
 import { Card } from "native-base";
 import { Item } from "../components/CardItem";
 import { EnhancedCustomInputContainer as Input } from "../components/Input";
-import { EnhancedCustomButtonContainer as Button } from "../components/Button";
+import { EnhancedCustomButtonContainer as Button } from "../components/Button/ScanButton";
 
-export var CollectTab = () => (
+export var CollectTab = ({ text }) => (
   <Fragment>
     <Input id={"host"} />
     <Input id={"family"} />
@@ -12,11 +12,7 @@ export var CollectTab = () => (
     <Input id={"place"} />
     <Button id={"scan"} text={"scan fingerprints"} />
     <Card>
-      <Item
-        head={"Collect Information"}
-        id={"collect"}
-        text={"scan Fingerprints"}
-      />
+      <Item head={"Collect Information"} id={"collect"} text={text} />
     </Card>
   </Fragment>
 );

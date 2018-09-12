@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Card } from "native-base";
 import { Item } from "../components/CardItem";
 import { EnhancedCustomInputContainer as Input } from "../components/Input";
-import { EnhancedCustomButtonContainer as Button } from "../components/Button";
+import { EnhancedErrorButtonContainer as Button } from "../components/Button/ErrorButton";
 
 export var ErrorTab = () => (
   <Fragment>
@@ -11,10 +11,10 @@ export var ErrorTab = () => (
     <Input id={"family"} />
     <Input id={"device"} />
     <Input id={"place"} />
-    <Button id={"scan"} text={"scan fingerprints"} />
+    <Button id={"scan"} text={"Calculate Error"} />
     <Card>
       <Item
-        head={"Error percentage infroamtion"}
+        head={"Error percentage information"}
         id={"errors"}
         text={"The percentage error is..."}
       />

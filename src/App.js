@@ -11,7 +11,11 @@ import {
   Tab,
   Tabs
 } from "native-base";
-import { CollectTab, TrackTab, ErrorTab } from "./containers";
+import {
+  CollectTabContainer as CollectTab,
+  TrackTabContainer as TrackTab,
+  ErrorTab
+} from "./containers";
 import { PermissionsAndroid } from "react-native";
 import configureReactotron from "./ReactotronConfig";
 import configureStore from "./configureStore.js";

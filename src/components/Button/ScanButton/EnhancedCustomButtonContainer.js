@@ -1,18 +1,14 @@
 import { connect } from "react-redux";
 import { EnhancedCustomButton } from "./EnhancedCustomButton";
-import upperCase from "lodash/upperCase";
-import { scanFingerprints, trackFingerprints } from "../../state/actions";
+import { scanFingerprints } from "../../../state/actions";
 
-var mapStateToProps = state => ({
-  active: state.data.toggle
-});
+var mapStateToProps = state => ({});
 
 var mapActionsToProps = {
-  onPressButton: key => ({
-    type: `${upperCase(key)}_FINGERPRINTS`
+  onPressButton: () => ({
+    type: `SCAN_FINGERPRINTS`
   }),
-  scanFingerprints,
-  trackFingerprints
+  scanFingerprints
 };
 
 export var EnhancedCustomButtonContainer = connect(

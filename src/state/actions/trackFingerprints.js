@@ -3,12 +3,11 @@ import timer from "react-native-timer";
 import { Alert } from "react-native";
 import {
   PARAMETERS_ERROR,
-  SEND_WIFI_ERROR,
-  SEND_WIFI_SUCCESS,
-  SEND_WIFI_START,
-  SEND_WIFI_END,
+  TRACK_SEND_WIFI_ERROR,
+  TRACK_SEND_WIFI_SUCCESS,
   FETCH_PREDICTIONS_SUCCESS,
   FETCH_PREDICTIONS_START,
+  FETCH_PREDICTIONS_END,
   FETCH_PREDICTIONS_ERROR
 } from "./actions";
 
@@ -36,10 +35,10 @@ export const trackFingerprints = () => {
     } else {
       if (timer.intervalExists("newTimer")) {
         timer.clearInterval("newTimer");
-        dispatch({ type: SEND_WIFI_END });
+        dispatch({ type: FETCH_PREDICTIONS_END });
       } else {
         timer.setInterval("newTimer", getAndSendWifi(dispatch), 2000);
-        dispatch({ type: SEND_WIFI_START });
+        dispatch({ type: FETCH_PREDICTIONS_START });
       }
     }
   };
@@ -66,8 +65,7 @@ var getAndSendWifi = dispatch => () => {
         })
       })
         .then(res => {
-          dispatch({ type: SEND_WIFI_SUCCESS });
-          dispatch({ type: FETCH_PREDICTIONS_START });
+          dispatch({ type: TRACK_SEND_WIFI_SUCCESS });
           fetch(
             "https://cloud.internalpositioning.com" +
               "/api/v1/location/posifi/nuevo"
@@ -85,7 +83,7 @@ var getAndSendWifi = dispatch => () => {
             });
         })
         .catch(err => {
-          dispatch({ type: SEND_WIFI_ERROR, payload: err });
+          dispatch({ type: TRACK_SEND_WIFI_ERROR, payload: err });
         });
     },
     error => {

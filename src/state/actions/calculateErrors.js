@@ -3,13 +3,14 @@ import timer from "react-native-timer";
 import { Alert } from "react-native";
 import {
   PARAMETERS_ERROR,
-  SEND_WIFI_ERROR,
-  SEND_WIFI_SUCCESS,
-  SEND_WIFI_START,
-  SEND_WIFI_END
+  ERROR_SEND_WIFI_ERROR,
+  COLLECT_ERROR_SUCCESS,
+  COLLECT_ERROR_START,
+  COLLECT_ERROR_END,
+  COLLECT_ERROR_ERROR
 } from "./actions";
 
-export const scanFingerprints = () => {
+export const calculateErrors = () => {
   return (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
@@ -34,15 +35,16 @@ export const scanFingerprints = () => {
         { cancelable: false }
       );
     } else {
-      if (timer.intervalExists("newTimer")) {
-        timer.clearInterval("newTimer");
-        dispatch({ type: SEND_WIFI_END });
-      } else {
-        timer.setInterval("newTimer", getAndSendWifi(dispatch), 2000);
-        dispatch({ type: SEND_WIFI_START });
-      }
+      timer.setTimeout("errorTimeOut", endCollect(dispatch), 10000);
+      timer.setInterval("errorTimer", getAndSendWifi(dispatch), 2000);
+      dispatch({ type: COLLECT_ERROR_START });
     }
   };
+};
+
+var endCollect = dispatch => () => {
+  timer.clearInterval("errorTimer");
+  dispatch({ type: COLLECT_ERROR_END });
 };
 
 var getAndSendWifi = dispatch => () => {
@@ -53,7 +55,6 @@ var getAndSendWifi = dispatch => () => {
         previous[item.BSSID] = item.level;
         return previous;
       }, {});
-      var data = wifiList.length;
       fetch("https://cloud.internalpositioning.com" + "/data", {
         method: "POST",
         headers: {
@@ -67,13 +68,24 @@ var getAndSendWifi = dispatch => () => {
         })
       })
         .then(res => {
-          dispatch({
-            type: SEND_WIFI_SUCCESS,
-            payload: data
-          });
+          fetch(
+            "https://cloud.internalpositioning.com" +
+              "/api/v1/location/posifi/nuevo"
+          )
+            .then(res => {
+              res.json().then(data =>
+                dispatch({
+                  type: COLLECT_ERROR_SUCCESS,
+                  payload: data.analysis.guesses
+                })
+              );
+            })
+            .catch(err => {
+              dispatch({ type: COLLECT_ERROR_ERROR, payload: err });
+            });
         })
         .catch(err => {
-          dispatch({ type: SEND_WIFI_ERROR, payload: err });
+          dispatch({ type: ERROR_SEND_WIFI_ERROR, payload: err });
         });
     },
     error => {
