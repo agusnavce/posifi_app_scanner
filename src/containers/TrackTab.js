@@ -8,7 +8,6 @@ import { EnhancedTrackButtonContainer as Button } from "../components/Button/Tra
 export var TrackTab = ({ text }) => (
   <Fragment>
     <Input id={"host"} />
-    <Input id={"family"} />
     <Input id={"device"} />
     <Button id={"scan"} text={"Track Phone"} />
     <Card>

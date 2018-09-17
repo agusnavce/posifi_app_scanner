@@ -1,6 +1,7 @@
 import wifi from "react-native-android-wifi";
 import timer from "react-native-timer";
 import { Alert } from "react-native";
+import { UPLOAD } from "react-native-dotenv";
 import {
   PARAMETERS_ERROR,
   ERROR_SEND_WIFI_ERROR,
@@ -14,14 +15,11 @@ export const calculateErrors = () => {
   return (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
-    var family = state.family;
     var device = state.device;
     var place = state.place;
     if (
       host === undefined ||
       host === "" ||
-      family === undefined ||
-      family == "" ||
       device === undefined ||
       device === "" ||
       place === undefined ||
@@ -47,7 +45,7 @@ var endCollect = dispatch => () => {
   dispatch({ type: COLLECT_ERROR_END });
 };
 
-var getAndSendWifi = dispatch => () => {
+var getAndSendWifi = (dispatch, host, device, place) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
       wifiList = [].concat(JSON.parse(wifiStringList));
@@ -55,7 +53,7 @@ var getAndSendWifi = dispatch => () => {
         previous[item.BSSID] = item.level;
         return previous;
       }, {});
-      fetch("https://cloud.internalpositioning.com" + "/data", {
+      fetch(host + "/data", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -63,20 +61,29 @@ var getAndSendWifi = dispatch => () => {
         },
         body: JSON.stringify({
           s: { wifi: lis },
-          d: "nuevo",
+          d: device,
           f: "posifi"
         })
       })
-        .then(res => {
-          fetch(
-            "https://cloud.internalpositioning.com" +
-              "/api/v1/location/posifi/nuevo"
-          )
+        .then(() => {
+          fetch(host + "/api/v1/location/posifi/nuevo")
             .then(res => {
               res.json().then(data =>
-                dispatch({
-                  type: COLLECT_ERROR_SUCCESS,
-                  payload: data.analysis.guesses
+                fetch(UPLOAD, {
+                  method: "POST",
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    data: data.analysis.guesses,
+                    place: place,
+                    task: "error"
+                  })
+                }).then(() => {
+                  dispatch({
+                    type: COLLECT_ERROR_SUCCESS
+                  });
                 })
               );
             })

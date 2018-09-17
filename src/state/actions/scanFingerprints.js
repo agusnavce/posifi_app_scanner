@@ -1,5 +1,6 @@
 import wifi from "react-native-android-wifi";
 import timer from "react-native-timer";
+import { UPLOAD } from "react-native-dotenv";
 import { Alert } from "react-native";
 import {
   PARAMETERS_ERROR,
@@ -13,14 +14,11 @@ export const scanFingerprints = () => {
   return (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
-    var family = state.family;
     var device = state.device;
     var place = state.place;
     if (
       host === undefined ||
       host === "" ||
-      family === undefined ||
-      family == "" ||
       device === undefined ||
       device === "" ||
       place === undefined ||
@@ -38,14 +36,18 @@ export const scanFingerprints = () => {
         timer.clearInterval("newTimer");
         dispatch({ type: SEND_WIFI_END });
       } else {
-        timer.setInterval("newTimer", getAndSendWifi(dispatch), 2000);
+        timer.setInterval(
+          "newTimer",
+          getAndSendWifi(dispatch, host, device, place),
+          2000
+        );
         dispatch({ type: SEND_WIFI_START });
       }
     }
   };
 };
 
-var getAndSendWifi = dispatch => () => {
+var getAndSendWifi = (dispatch, host, device, place) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
       wifiList = [].concat(JSON.parse(wifiStringList));
@@ -54,7 +56,7 @@ var getAndSendWifi = dispatch => () => {
         return previous;
       }, {});
       var data = wifiList.length;
-      fetch("https://cloud.internalpositioning.com" + "/data", {
+      fetch(host + "/data", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -62,14 +64,28 @@ var getAndSendWifi = dispatch => () => {
         },
         body: JSON.stringify({
           s: { wifi: lis },
-          d: "nuevo",
+          d: device,
+          l: place,
           f: "posifi"
         })
       })
-        .then(res => {
-          dispatch({
-            type: SEND_WIFI_SUCCESS,
-            payload: data
+        .then(() => {
+          fetch(UPLOAD, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              data: lis,
+              place: place,
+              task: "task"
+            })
+          }).then(() => {
+            dispatch({
+              type: SEND_WIFI_SUCCESS,
+              payload: data
+            });
           });
         })
         .catch(err => {

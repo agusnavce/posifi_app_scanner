@@ -15,13 +15,10 @@ export const trackFingerprints = () => {
   return (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
-    var family = state.family;
     var device = state.device;
     if (
       host === undefined ||
       host === "" ||
-      family === undefined ||
-      family == "" ||
       device === undefined ||
       device === ""
     ) {
@@ -37,7 +34,11 @@ export const trackFingerprints = () => {
         timer.clearInterval("newTimer");
         dispatch({ type: FETCH_PREDICTIONS_END });
       } else {
-        timer.setInterval("newTimer", getAndSendWifi(dispatch), 2000);
+        timer.setInterval(
+          "newTimer",
+          getAndSendWifi(dispatch, host, device),
+          2000
+        );
         dispatch({ type: FETCH_PREDICTIONS_START });
       }
     }
@@ -52,7 +53,7 @@ var getAndSendWifi = dispatch => () => {
         previous[item.BSSID] = item.level;
         return previous;
       }, {});
-      fetch("https://cloud.internalpositioning.com" + "/data", {
+      fetch(host + "/data", {
         method: "POST",
         headers: {
           Accept: "application/json",

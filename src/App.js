@@ -14,7 +14,7 @@ import {
 import {
   CollectTabContainer as CollectTab,
   TrackTabContainer as TrackTab,
-  ErrorTab
+  ErrorsTabContainer as ErrorTab
 } from "./containers";
 import { PermissionsAndroid } from "react-native";
 import configureReactotron from "./ReactotronConfig";

@@ -10,7 +10,10 @@ import {
   FETCH_PREDICTIONS_END,
   FETCH_PREDICTIONS_START,
   TRACK_SEND_WIFI_ERROR,
-  FETCH_PREDICTIONS_SUCCESS
+  FETCH_PREDICTIONS_SUCCESS,
+  COLLECT_ERROR_END,
+  COLLECT_ERROR_START,
+  COLLECT_ERROR_SUCCESS
 } from "../actions";
 
 var initialSate = {
@@ -20,7 +23,9 @@ var initialSate = {
   collectError: "",
   trackText: "",
   trackTitle: "",
-  trackError: ""
+  trackError: "",
+  errorsTitle: "",
+  errorsSamples: 0
 };
 
 export default combineReducers({
@@ -35,6 +40,22 @@ export default combineReducers({
         return {
           ...state,
           collectError: action.payload
+        };
+      case COLLECT_ERROR_START:
+        return {
+          ...state,
+          errorsTitle: "Error recolection started"
+        };
+
+      case COLLECT_ERROR_SUCCESS:
+        return {
+          ...state,
+          errorsSamples: ++state.errorsSamples
+        };
+      case COLLECT_ERROR_END:
+        return {
+          ...state,
+          errorsTitle: "Error recolection ended"
         };
       case SEND_WIFI_END:
         return {
