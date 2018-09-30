@@ -45,7 +45,7 @@ export const trackFingerprints = () => {
   };
 };
 
-var getAndSendWifi = dispatch => () => {
+var getAndSendWifi = (dispatch, host, name) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
       wifiList = [].concat(JSON.parse(wifiStringList));
@@ -61,16 +61,13 @@ var getAndSendWifi = dispatch => () => {
         },
         body: JSON.stringify({
           s: { wifi: lis },
-          d: "nuevo",
+          d: name,
           f: "posifi"
         })
       })
-        .then(res => {
+        .then(() => {
           dispatch({ type: TRACK_SEND_WIFI_SUCCESS });
-          fetch(
-            "https://cloud.internalpositioning.com" +
-              "/api/v1/location/posifi/nuevo"
-          )
+          fetch(host + "/api/v1/location/posifi/nuevo")
             .then(res => {
               res.json().then(data =>
                 dispatch({
