@@ -9,6 +9,7 @@ export var CollectTab = ({ text }) => (
     <Input id={"host"} />
     <Input id={"device"} />
     <Input id={"place"} />
+    <Input id={"family"} />
     <Button id={"scan"} text={"scan fingerprints"} />
     <Card>
       <Item head={"Collect Information"} id={"collect"} text={text} />

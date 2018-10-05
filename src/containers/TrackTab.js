@@ -9,6 +9,7 @@ export var TrackTab = ({ text }) => (
   <Fragment>
     <Input id={"host"} />
     <Input id={"device"} />
+    <Input id={"family"} />
     <Button id={"scan"} text={"Track Phone"} />
     <Card>
       <Item head={"Track Information"} id={"track"} text={text} />

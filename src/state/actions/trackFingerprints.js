@@ -16,11 +16,14 @@ export const trackFingerprints = () => {
     var state = getState().data;
     var host = state.host;
     var device = state.device;
+    var family = state.family;
     if (
       host === undefined ||
       host === "" ||
       device === undefined ||
-      device === ""
+      device === "" ||
+      family === undefined ||
+      family === ""
     ) {
       dispatch({ type: PARAMETERS_ERROR });
       Alert.alert(
@@ -36,7 +39,7 @@ export const trackFingerprints = () => {
       } else {
         timer.setInterval(
           "newTimer",
-          getAndSendWifi(dispatch, host, device),
+          getAndSendWifi(dispatch, host, device, family),
           2000
         );
         dispatch({ type: FETCH_PREDICTIONS_START });
@@ -62,12 +65,12 @@ var getAndSendWifi = (dispatch, host, name) => () => {
         body: JSON.stringify({
           s: { wifi: lis },
           d: name,
-          f: "posifi"
+          f: family
         })
       })
         .then(() => {
           dispatch({ type: TRACK_SEND_WIFI_SUCCESS });
-          fetch(host + "/api/v1/location/posifi/nuevo")
+          fetch(host + `/api/v1/location/posifi/${name}`)
             .then(res => {
               res.json().then(data =>
                 dispatch({

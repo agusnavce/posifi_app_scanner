@@ -1,6 +1,5 @@
 import wifi from "react-native-android-wifi";
 import timer from "react-native-timer";
-import { UPLOAD } from "react-native-dotenv";
 import { Alert } from "react-native";
 import {
   PARAMETERS_ERROR,
@@ -16,13 +15,16 @@ export const scanFingerprints = () => {
     var host = state.host;
     var device = state.device;
     var place = state.place;
+    var family = state.family;
     if (
       host === undefined ||
       host === "" ||
       device === undefined ||
       device === "" ||
       place === undefined ||
-      place === ""
+      place === "" ||
+      family === undefined ||
+      family === ""
     ) {
       dispatch({ type: PARAMETERS_ERROR });
       Alert.alert(
@@ -38,7 +40,7 @@ export const scanFingerprints = () => {
       } else {
         timer.setInterval(
           "newTimer",
-          getAndSendWifi(dispatch, host, device, place),
+          getAndSendWifi(dispatch, host, device, place, family),
           2000
         );
         dispatch({ type: SEND_WIFI_START });
@@ -47,7 +49,7 @@ export const scanFingerprints = () => {
   };
 };
 
-var getAndSendWifi = (dispatch, host, device, place) => () => {
+var getAndSendWifi = (dispatch, host, device, place, family) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
       wifiList = [].concat(JSON.parse(wifiStringList));
@@ -66,26 +68,13 @@ var getAndSendWifi = (dispatch, host, device, place) => () => {
           s: { wifi: lis },
           d: device,
           l: place,
-          f: "posifi"
+          f: family
         })
       })
         .then(() => {
-          fetch(UPLOAD, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              data: lis,
-              place: place,
-              task: "task"
-            })
-          }).then(() => {
-            dispatch({
-              type: SEND_WIFI_SUCCESS,
-              payload: data
-            });
+          dispatch({
+            type: SEND_WIFI_SUCCESS,
+            payload: data
           });
         })
         .catch(err => {
