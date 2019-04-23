@@ -7,9 +7,7 @@ import { EnhancedCustomButtonContainer as Button } from "../components/Button/Sc
 export var CollectTab = ({ text }) => (
   <Fragment>
     <Input id={"host"} />
-    <Input id={"device"} />
     <Input id={"place"} />
-    <Input id={"family"} />
     <Button id={"scan"} text={"scan fingerprints"} />
     <Card>
       <Item head={"Collect Information"} id={"collect"} text={text} />

@@ -10,22 +10,12 @@ import {
 } from "./actions";
 
 export const scanFingerprints = () => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
-    var device = state.device;
     var place = state.place;
-    var family = state.family;
-    if (
-      host === undefined ||
-      host === "" ||
-      device === undefined ||
-      device === "" ||
-      place === undefined ||
-      place === "" ||
-      family === undefined ||
-      family === ""
-    ) {
+    if (host === undefined || host === "") host = "https://api.posifi.live";
+    if (place === undefined || place === "") {
       dispatch({ type: PARAMETERS_ERROR });
       Alert.alert(
         "Error en los parametros",
@@ -40,8 +30,8 @@ export const scanFingerprints = () => {
       } else {
         timer.setInterval(
           "newTimer",
-          getAndSendWifi(dispatch, host, device, place, family),
-          2000
+          getAndSendWifi(dispatch, host, place),
+          500
         );
         dispatch({ type: SEND_WIFI_START });
       }
@@ -49,26 +39,25 @@ export const scanFingerprints = () => {
   };
 };
 
-var getAndSendWifi = (dispatch, host, device, place, family) => () => {
+var getAndSendWifi = (dispatch, host, place) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
-      wifiList = [].concat(JSON.parse(wifiStringList));
+      wifiList = JSON.parse(wifiStringList);
       var lis = wifiList.reduce((previous, item) => {
         previous[item.BSSID] = item.level;
         return previous;
       }, {});
       var data = wifiList.length;
-      fetch(host + "/data", {
+      fetch(host + "/fingerprint", {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          s: { wifi: lis },
-          d: device,
-          l: place,
-          f: family
+          wifi: lis,
+          result: place,
+          has_5_ghz: true
         })
       })
         .then(() => {

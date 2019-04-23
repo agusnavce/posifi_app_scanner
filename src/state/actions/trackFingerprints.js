@@ -1,8 +1,7 @@
 import wifi from "react-native-android-wifi";
 import timer from "react-native-timer";
-import { Alert } from "react-native";
+import DeviceInfo from "react-native-device-info";
 import {
-  PARAMETERS_ERROR,
   TRACK_SEND_WIFI_ERROR,
   TRACK_SEND_WIFI_SUCCESS,
   FETCH_PREDICTIONS_SUCCESS,
@@ -12,46 +11,35 @@ import {
 } from "./actions";
 
 export const trackFingerprints = () => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
     var device = state.device;
     var family = state.family;
-    if (
-      host === undefined ||
-      host === "" ||
-      device === undefined ||
-      device === "" ||
-      family === undefined ||
-      family === ""
-    ) {
-      dispatch({ type: PARAMETERS_ERROR });
-      Alert.alert(
-        "Error en los parametros",
-        "Se deben completar todos los campos",
-        [{ text: "OK", onPress: () => {} }],
-        { cancelable: false }
-      );
+    if (host === undefined || host === "") host = "http://api.posifi.live";
+    if (device === undefined || device === "") {
+      var mac = await DeviceInfo.getMACAddress();
+      var device = mac.replace(/:/g, "").toLowerCase();
+    }
+    if (family === "" || family === undefined) family = "posifi";
+    if (timer.intervalExists("newTimer")) {
+      timer.clearInterval("newTimer");
+      dispatch({ type: FETCH_PREDICTIONS_END });
     } else {
-      if (timer.intervalExists("newTimer")) {
-        timer.clearInterval("newTimer");
-        dispatch({ type: FETCH_PREDICTIONS_END });
-      } else {
-        timer.setInterval(
-          "newTimer",
-          getAndSendWifi(dispatch, host, device, family),
-          2000
-        );
-        dispatch({ type: FETCH_PREDICTIONS_START });
-      }
+      timer.setInterval(
+        "newTimer",
+        getAndSendWifi(dispatch, host, device, family),
+        2000
+      );
+      dispatch({ type: FETCH_PREDICTIONS_START });
     }
   };
 };
 
-var getAndSendWifi = (dispatch, host, name) => () => {
+var getAndSendWifi = (dispatch, host, name, family) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
-      wifiList = [].concat(JSON.parse(wifiStringList));
+      wifiList = JSON.parse(wifiStringList);
       var lis = wifiList.reduce((previous, item) => {
         previous[item.BSSID] = item.level;
         return previous;
@@ -70,14 +58,14 @@ var getAndSendWifi = (dispatch, host, name) => () => {
       })
         .then(() => {
           dispatch({ type: TRACK_SEND_WIFI_SUCCESS });
-          fetch(host + `/api/v1/location/posifi/${name}`)
+          fetch(host + `/api/v1/location/${family}/${name}`)
             .then(res => {
-              res.json().then(data =>
-                dispatch({
+              res.json().then(data => {
+                return dispatch({
                   type: FETCH_PREDICTIONS_SUCCESS,
                   payload: data.analysis.guesses
-                })
-              );
+                });
+              });
             })
             .catch(err => {
               dispatch({ type: FETCH_PREDICTIONS_ERROR, payload: err });

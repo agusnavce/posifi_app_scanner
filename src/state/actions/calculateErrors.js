@@ -1,6 +1,7 @@
 import wifi from "react-native-android-wifi";
 import timer from "react-native-timer";
 import { Alert } from "react-native";
+import DeviceInfo from "react-native-device-info";
 import { UPLOAD } from "react-native-dotenv";
 import {
   PARAMETERS_ERROR,
@@ -12,23 +13,22 @@ import {
 } from "./actions";
 
 export const calculateErrors = () => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     var state = getState().data;
     var host = state.host;
     var device = state.device;
     var place = state.place;
-    if (
-      host === undefined ||
-      host === "" ||
-      device === undefined ||
-      device === "" ||
-      place === undefined ||
-      place === ""
-    ) {
+    var family = state.family;
+    if (host === undefined || host === "") host = "http://api.posifi.live";
+    if (device === undefined || device === "")
+      device = await DeviceInfo.getMACAddress();
+    if (family === "" || family === undefined) family = "posifi";
+
+    if (place === undefined || place === "") {
       dispatch({ type: PARAMETERS_ERROR });
       Alert.alert(
         "Error en los parametros",
-        "Se deben completar todos los campos",
+        "Se deben completar el dispositivo",
         [{ text: "OK", onPress: () => {} }],
         { cancelable: false }
       );
@@ -45,10 +45,10 @@ var endCollect = dispatch => () => {
   dispatch({ type: COLLECT_ERROR_END });
 };
 
-var getAndSendWifi = (dispatch, host, device, place) => () => {
+var getAndSendWifi = (dispatch, host, device, place, family) => () => {
   wifi.reScanAndLoadWifiList(
     wifiStringList => {
-      wifiList = [].concat(JSON.parse(wifiStringList));
+      wifiList = JSON.parse(wifiStringList);
       var lis = wifiList.reduce((previous, item) => {
         previous[item.BSSID] = item.level;
         return previous;
@@ -62,7 +62,7 @@ var getAndSendWifi = (dispatch, host, device, place) => () => {
         body: JSON.stringify({
           s: { wifi: lis },
           d: device,
-          f: "posifi"
+          f: family
         })
       })
         .then(() => {
